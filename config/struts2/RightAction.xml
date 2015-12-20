@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="rightpackage" namespace="/" extends="surveyparkPackage">
+		<action name="RightAction_*" method="{1}" class="com.kdyzm.struts.action.RightAction">
+			<result name="toRightManagementPage">/right/rightmanagement.jsp</result>
+			<result name="toSaveOrUpdateRightPage">/right/addOrUpdateRight.jsp</result>
+			<result name="toRightManagementPageAction" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">RightAction_toRightManagementPage.action</param>
+			</result>
+		</action>
+	</package>
+</struts>

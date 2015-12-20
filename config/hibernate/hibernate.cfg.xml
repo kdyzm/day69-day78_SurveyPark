@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<!-- 这里的数据源不需要配置了，使用spring进行c3p0数据源的配置 -->
+		<!-- <property name="connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">5a6f38</property>
+		<property name="connection.url">
+			jdbc:mysql://localhost:3306/lsn_surveypark
+		</property> -->
+		<property name="show_sql">true</property>
+		<property name="hbm2ddl.auto">update</property>
+		<property name="dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="javax.persistence.validation.mode">none</property>
+	</session-factory>
+</hibernate-configuration>

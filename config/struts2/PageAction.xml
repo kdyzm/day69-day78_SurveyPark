@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="pagePackage" extends="surveyparkPackage" namespace="/">
+		<action name="PageAction_*" class="com.kdyzm.struts.action.PageAction" method="{1}">
+			<result name="toAddPagePage">/page/addNewPage.jsp</result>
+			<result name="toEditPageTitlePage">/page/editPageTitlePage.jsp</result>
+			<result name="selectTargetPage">/page/selectTargetPage.jsp</result>
+		</action>
+	</package>
+</struts>

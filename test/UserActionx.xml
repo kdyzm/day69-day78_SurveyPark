@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="userPackagex" namespace="/" extends="surveyparkPackage">
+		<action name="UserActionx_*" class="com.kdyzm.test.action.UserAction" method="{1}">
+			<result name="showReg">/test/showReg.jsp</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="statisticPackage" namespace="/"
+		extends="surveyparkPackage">
+		<action name="StatisticAction_*" method="{1}" class="com.kdyzm.struts.action.StatisticAction">
+			<result name="success" type="chart">
+				<param name="value">chart</param>
+				<param name="type">png</param>
+				<param name="width">800</param>
+				<param name="height">480</param>
+			</result>
+			<result name="toShowSurveyPage">/statistic/showSurveyPage.jsp</result>
+			<!-- 接收不同种类消息，转发到不同的页面 -->
+			<result name="6">/statistic/nomalMatrixStatistic.jsp</result>
+			<result name="7">/statistic/nomalMatrixStatistic.jsp</result>
+			<result name="8">/statistic/selectMatrixStatistic.jsp</result>
+		</action>
+	</package>
+</struts>

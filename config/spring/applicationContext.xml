@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop file:///D:\程序\java\Spring\spring-framework-4.2.1\spring-framework-4.2.1.RELEASE\schema/aop/spring-aop-2.5.xsd
+		http://www.springframework.org/schema/beans file:///D:\程序\java\Spring\spring-framework-4.2.1\spring-framework-4.2.1.RELEASE\schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/cache file:///D:\程序\java\Spring\spring-framework-4.2.1\spring-framework-4.2.1.RELEASE\schema\cache/spring-cache-3.1.xsd
+		http://www.springframework.org/schema/tx file:///D:\程序\java\Spring\spring-framework-4.2.1\spring-framework-4.2.1.RELEASE\schema/tx/spring-tx-2.5.xsd
+		http://www.springframework.org/schema/context file:///D:\程序\java\Spring\spring-framework-4.2.1\spring-framework-4.2.1.RELEASE\schema/context/spring-context-2.5.xsd">
+	<!-- 组件扫描 -->
+	<context:component-scan
+		base-package="com.kdyzm.dao.impl,com.kdyzm.service.impl,com.kdyzm.struts.action,com.kdyzm.dao.base.impl,com.kdyzm.listener"></context:component-scan>
+	<!-- 分散的配置，该配置上实际上是一个properties配置文件，但是可以在配置文件中引用该配置文件中的内容 -->
+	<!-- 注意这里使用的位置必须前面加上classpath:，这样才能找到，否则在本地测试是没有问题，如果作为web项目部署到服务器中就会出现FileNotFoundException异常 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+
+	<!-- 开始整合hibernate -->
+	<!-- 配置数据源（主库） -->
+	<bean id="dateSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverclass}"></property>
+		<property name="jdbcUrl" value="${jdbc.url}"></property>
+		<property name="user" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	
+		<!-- 配置本身的数据源 -->
+		<property name="maxPoolSize" value="${c3p0.pool.maxsize}"></property>
+		<property name="minPoolSize" value="${c3p0.pool.minsize}"></property>
+		<property name="initialPoolSize" value="${c3p0.pool.initsieze}"></property>
+		<property name="acquireIncrement" value="${c3p0.pool.increment}"></property>
+	</bean>
+	<!-- （从库） 为了实现分库的功能，必须针对每个数据库配置一个数据源 这里使用了包的继承的特殊属性使用parent属性对dataSource进行了继承 -->
+	<bean id="dataSource1" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		parent="dateSource">
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/lsn_surveypark1"></property>
+	</bean>
+
+	<!-- 配置数据源路由器 -->
+	<bean id="dataSource_router" class="com.kdyzm.datasource.SurveyparkDatasourceRouter">
+		<property name="targetDataSources">
+			<map>
+				<!-- 如果id是偶数，保存到主库中 -->
+				<entry key="even" value-ref="dateSource"></entry>
+				<!-- 如果id是奇数，保存到从库中 -->
+				<entry key="odd" value-ref="dataSource1"></entry>
+			</map>
+		</property>
+		<!-- 如果不满足上述规则，则直接使用默认的数据源 -->
+		<property name="defaultTargetDataSource" ref="dateSource"></property>
+	</bean>
+	<!-- 本地会话工厂bean，spring整合hibernate的核心入口 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- 注入数据源 -->
+		<!-- <property name="dataSource" ref="dataSource_router"></property> -->
+		<property name="dataSource" ref="dateSource"></property>
+		<!-- 指定hibernate配置文件 -->
+		<property name="configLocation" value="classpath:hibernate/hibernate.cfg.xml"></property>
+		<!-- 指定映射文件目录 -->
+		<property name="mappingDirectoryLocations">
+			<list>
+				<value>classpath:com/kdyzm/domain</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 事务管理器 -->
+	<bean name="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
+	<!-- 配置事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<!-- 需要加上事务处理的 -->
+			<tx:method name="save*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="false" />
+			<tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="false" />
+			<tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="false" />
+			<tx:method name="batch*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="false" />
+			<tx:method name="new*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="false" />
+			<tx:method name="create*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="false" />
+			<!-- 不需要加上事务处理的 -->
+			<tx:method name="get*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="true" />
+			<tx:method name="load*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="true" />
+			<tx:method name="find*" isolation="DEFAULT" propagation="REQUIRED"
+				read-only="true" />
+			<!-- 其余的方法全部加上事务，防止某些方法应该加上事务但是方法名不匹配，
+				先解决掉分库之后答案的查询问题
+			暂且将该功能全部关闭掉，关掉之后服务器都启动不起来了。 -->
+			<tx:method name="*" isolation="DEFAULT" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<bean id="logger" class="com.kdyzm.aspect.Logger">
+		<property name="logService" ref="logService"></property>
+	</bean>
+	
+	
+	<!-- 配置Spring远程调用服务端 -->
+	<bean name="/surveyService.service" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="serviceInterface" value="com.kdyzm.service.SurveyService"></property>
+		<property name="service" ref="surveyService"></property>
+	</bean>
+	<!-- 配置spring3.0中的缓存策略 -->
+
+	<!-- ehcacheManager工厂配置 -->
+	<bean id="ehcacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml"></property>
+	</bean>
+
+	<!-- ehcache管理器 -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcacheManager"></property>
+	</bean>
+
+	<!-- Key生成器 ,先存档 -->
+	<bean id="surveyKeyGenerator" class="com.kdyzm.cache.SurveykeyGenerator" />
+	<!-- 定义缓存通知 -->
+	<cache:advice id="cacheAdvice" cache-manager="cacheManager"
+		key-generator="surveyKeyGenerator"><!-- 这里需要配置key生成器 -->
+		<cache:caching cache="surveyCache">
+			<!-- 设置缓存的方法 -->
+			<cache:cacheable method="get*" />
+			<cache:cacheable method="load" />
+			<cache:cacheable method="find*" />
+			<cache:cacheable method="is*" />
+	
+			<!-- 设置需要清空缓存的方法 -->
+			<cache:cache-evict method="save*" all-entries="true" />
+			<cache:cache-evict method="update*" all-entries="true" />
+			<cache:cache-evict method="delete*" all-entries="true" />
+			<cache:cache-evict method="batch*" all-entries="true" />
+			<cache:cache-evict method="create*" all-entries="true" />
+			<cache:cache-evict method="new*" all-entries="true" />
+		</cache:caching>
+	</cache:advice>
+	<!-- aop事务配置 -->
+<aop:config>
+	<!-- 日志切入点 -->
+	<aop:pointcut
+		expression="(execution(* *..*Service.save*(..))
+								or execution(* *..*Service.update*(..))
+								or execution(* *..*Service.delete*(..))
+								or execution(* *..*Service.batch*(..))
+								or execution(* *..*Service.create*(..))
+								or execution(* *..*Service.new*(..))) and !bean(logService)"
+		id="loggerPointcut" />
+	<aop:pointcut expression="execution(* *..*Service.*(..))"
+		id="txPointcut" />
+	<!-- 必须配置order属性，使用该属性可以改变配置的通知的加载顺序，order值越大，优先级越高 必须让事务的通知放到后面，让日志的通知先执行，这样才能在执行完成日志的通知后事务确保能够结束。 
+		order值越小，优先级越高 为了解决事务没有结束的问题，必须同时修改解除绑定的时间 -->
+	<aop:advisor advice-ref="cacheAdvice"
+		pointcut="execution(* com.kdyzm.service.SurveyService.*(..)) or
+				execution(* com.kdyzm.service.PageService.*(..)) or
+				execution(* com.kdyzm.service.QuestionService.*(..)) or
+				execution(* com.kdyzm.service.AnswerService.*(..))" order="0" />
+	<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"
+		order="2" />
+	<aop:aspect id="loggerAspect" ref="logger" order="1">
+		<aop:around method="record" pointcut-ref="loggerPointcut" />
+	</aop:aspect>
+</aop:config>
+</beans>

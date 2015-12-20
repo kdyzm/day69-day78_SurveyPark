@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.kdyzm.domain.Page" table="page">
+		<id name="pageId" type="integer" length="32">
+			<generator class="increment"></generator>
+		</id>
+		<property name="title" type="string" length="32"></property>
+		<property name="description" type="string" length="200"></property>
+		<!-- 通过这种方式限制数据库中保存的数据长度 -->
+		<property name="orderNo" type="float">
+			<column name="orderno" sql-type="decimal(10,5)"></column>
+		</property>
+		<many-to-one name="survey" cascade="save-update" class="com.kdyzm.domain.Survey">
+			<column name="surveyId"></column>
+		</many-to-one>
+		<!-- 这里将inverse的属性设置为true，这样在修改Page对象的时候能够自动维护之前和Question对象之间的关系
+			否则的话就费劲了。
+		 -->
+		<set name="questions" cascade="save-update" inverse="true" order-by="questionId">
+			<key>
+				<column name="pageId"></column>
+			</key>
+			<one-to-many class="com.kdyzm.domain.Question"/>
+		</set>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.kdyzm.domain.Survey" table="survey">
+		<id name="surveyId" type="integer" length="32">
+			<generator class="increment"></generator>
+		</id>
+		<property name="maxOrderNo" type="float">
+			<formula>(select max(p.orderNo) from page p where p.surveyId=surveyId)</formula>
+		</property>
+		<property name="minOrderNo" type="float">
+			<formula>(select min(p.orderNo) from page p where p.surveyId=surveyId)</formula>
+		</property>
+		<property name="title" type="string" length="100"></property>
+		<property name="preText" type="string" length="50"></property>
+		<property name="nextText" type="string" length="50"></property>
+		<property name="exitText" type="string" length="50"></property>
+		<property name="doneText" type="string" length="50"></property>
+		<property name="createDate" type="timestamp"></property>
+		<property name="closed" type="boolean" update="false"></property>
+		<property name="logoPath" type="string" length="300"></property>
+		<many-to-one name="user" cascade="save-update" class="com.kdyzm.domain.User" column="userId"></many-to-one>
+		<!-- 将inverse属性设置为true有很大的作用，可以在修改Survey的同时自动维护之前和Pages的关系，生了很多的功夫 -->
+		<set name="pages" cascade="save-update" inverse="true" order-by="orderno">
+			<key>
+				<column name="surveyId"></column>
+			</key>
+			<one-to-many class="com.kdyzm.domain.Page"/>
+		</set>
+	</class>
+</hibernate-mapping>

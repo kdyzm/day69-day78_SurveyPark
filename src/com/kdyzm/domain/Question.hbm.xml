@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.kdyzm.domain.Question" table="question">
+		<id name="questionId" type="integer" length="32">
+			<generator class="increment"></generator>
+		</id>
+		<property name="questionType" type="integer" length="32"></property>
+		<property name="title" type="string" length="50"></property>
+		<property name="optionText" type="string" length="1000"></property>
+		<property name="other" type="boolean"></property>
+		<property name="otherType" type="string" length="1000"></property>
+		<property name="otherSelectOptions" type="string" length="1000"></property>
+		<property name="matrixRowTitles" type="string" length="1000"></property>
+		<property name="matrixColTitles" type="string" length="1000"></property>
+		<property name="matrixSelectOptions" type="string" length="1000"></property>
+		<many-to-one name="page" class="com.kdyzm.domain.Page" column="pageId" cascade="save-update"></many-to-one>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="anthenticationPackage" extends="surveyparkPackage" namespace="/">
+		<action name="AuthenticationAction_*" class="com.kdyzm.struts.action.AuthenticationAction" method="{1}">
+			<result name="toAuthenticationManagementPage">/user/anthenticationManagement.jsp</result>
+			<result name="toUpdateAuthenticationPage">/user/updateAuthenticationPage.jsp</result>
+			<result name="toAuthenticationManagementPageAction" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">AuthenticationAction_toAuthenticationManagementPage.action</param>
+			</result>
+		</action>
+	</package>
+</struts>

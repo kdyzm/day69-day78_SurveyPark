@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<!-- 定义新的拦截器用于拦截未登录就访问资源的请求！ -->
+	<package name="surveyparkPackage" extends="struts-default,jfreechart-default" namespace="/">
+		<interceptors>
+			<interceptor name="loginInterceptor" class="com.kdyzm.struts.interceptors.LoginInterceptor"></interceptor>
+			<interceptor name="catchUrlInterceptor" class="com.kdyzm.struts.interceptors.CatchUrlInterceptor"></interceptor>
+			<interceptor-stack name="surveyparkStack">
+				<interceptor-ref name="loginInterceptor"></interceptor-ref>
+				<!-- url捕获拦截器应当放到登录拦截器之后,完成项目之后应当将该拦截器拿掉 -->
+				<!-- <interceptor-ref name="catchUrlInterceptor"></interceptor-ref> -->
+				<!-- 这里不使用defaultStack，使用paramsPrepareParamsStack的原因是前者无法从页面向Action传递参数 -->
+				<interceptor-ref name="defaultStack">
+					<!-- 这里开启模型驱动的自动刷新功能 ，这个配置十分强大，最重要的是要理解为什么要这么配置-->
+					<param name="modelDriven.refreshModelBeforeResult">true</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 定义默认栈 -->
+		<default-interceptor-ref name="surveyparkStack"></default-interceptor-ref>
+		<!-- 定义全局result，用于未经授权就想访问某些资源的时候被拦截器拦截住之后强制登陆的问题 -->
+		<global-results>
+			<result name="toLoginPage">/index.jsp</result>
+			<!-- 定义全局结果类型，将编辑页面之后的返回页面定义为全局结果类型 -->
+			<result name="toDesignSurveyPageAction" type="redirectAction">
+				<param name="surveyId">${surveyId}</param>
+				<param name="namespace">/</param>
+				<param name="actionName">SurveyAction_designSurveyPage.action</param>
+			</result>
+			<result name="no_right_error">/error/no_right_error.jsp</result>
+		</global-results>
+		<action name="LoginAction_*" class="com.kdyzm.struts.action.LoginAction" method="{1}">
+			<result name="toIndexPage" type="redirect">/index.jsp</result>
+			<!-- 当返回类型是input的时候，必须使用转发的方式，而不能使用重定向的方式 -->
+			<result name="input">/index.jsp</result>
+		</action>
+	</package>
+	<include file="struts2/RegisterAction.xml"></include>
+	<include file="struts2/IndexAction.xml"></include>
+	<include file="struts2/UserAction.xml"></include>
+	<include file="struts2/SurveyAction.xml"></include>
+	<include file="struts2/PageAction.xml"></include>
+	<include file="struts2/QuestionAction.xml"></include>
+	<include file="struts2/EntrySurveyAction.xml"></include>
+	<include file="struts2/StatisticAction.xml"></include>
+	<include file="struts2/RightAction.xml"></include>
+	<include file="struts2/RoleAction.xml"></include>
+	<include file="struts2/AuthenticationAction.xml"></include>
+	<include file="UserActionx.xml"></include>
+	<include file="struts2/LogAction.xml"></include>
+</struts>

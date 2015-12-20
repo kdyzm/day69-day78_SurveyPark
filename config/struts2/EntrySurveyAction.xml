@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="entrySurveyPackage" extends="surveyparkPackage" namespace="/">
+		<action name="EntrySurveyAction_*" class="com.kdyzm.struts.action.EntrySurveyAction" method="{1}">
+			<result name="toEntrySurveyPage">/entrysurvey/entrysurvey.jsp</result>
+			<result name="surveyPage">/entrysurvey/surveyPage.jsp</result>
+			<result name="toEntrySurveyPageAction" type="redirectAction">
+				<param name="namespace">/</param>
+				<param name="actionName">EntrySurveyAction_toEntrySurveyPage.action</param>
+			</result>
+		</action>
+	</package>
+</struts>

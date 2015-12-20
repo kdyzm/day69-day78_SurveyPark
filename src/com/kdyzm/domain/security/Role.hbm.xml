@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.kdyzm.domain.security.Role" table="roles">
+		<id name="roleId" type="integer">
+			<generator class="increment"></generator>
+		</id>
+		<property name="roleDesc" type="string" length="150"></property>
+		<property name="roleName" type="string" length="50"></property>
+		<property name="roleValue" type="string" length="32"></property>
+		<set name="rights" table="role_right" order-by="rightId">
+			<key>
+				<column name="roleId"></column>
+			</key>
+			<many-to-many class="com.kdyzm.domain.security.Right">
+				<column name="rightId"></column>
+			</many-to-many>
+		</set>
+	</class>
+</hibernate-mapping>

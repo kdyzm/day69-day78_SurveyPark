@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.kdyzm.domain.security.Right" table="rights">
+		<id name="rightId" type="integer" length="32">
+			<generator class="increment"></generator>
+		</id>
+		<property name="rightCodes" type="long" length="64"></property>
+		<property name="rightDesc" type="string" length="300"></property>
+		<property name="rightPos" type="integer" length="32"></property>
+		<property name="rightUrl" type="string" length="150"></property>
+		<property name="rightName" type="string" length="150"></property>
+		<property name="common" type="boolean"></property>
+	</class>
+</hibernate-mapping>

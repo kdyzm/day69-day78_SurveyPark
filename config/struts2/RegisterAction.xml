@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="registerPackage" extends="surveyparkPackage" namespace="/">
+		<action name="RegisterAction_*" class="com.kdyzm.struts.action.RegisterAction" method="{1}">
+			<result name="toRegisterPage" type="redirect">/register/register.jsp</result>
+			<result name="toIndexPage" type="redirect">/index.jsp</result>
+			<!-- 当返回类型是input的时候就不能使用重定向的方式了，必须使用转发的方式 -->
+			<result name="input">/register/register.jsp</result>
+		</action>
+	</package>
+</struts>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- <!DOCTYPE struts SYSTEM "file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd"> -->
+  <!DOCTYPE struts PUBLIC
+"-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+"file:\\\D:\程序\java\struts2\dtd\struts-2.3.dtd">
+<struts>
+	<package name="surveyPackage" namespace="/" extends="surveyparkPackage">
+		<action name="SurveyAction_*" class="com.kdyzm.struts.action.SurveyAction" method="{1}">
+			<result name="toMySurveyPageAction" type="redirectAction">
+				<param name="actionName">SurveyAction_toMySurveyPage.action</param>
+				<param name="namespace">/</param>
+			</result>
+			<result name="toMySurveyPage">/survey/showMySurveyPage.jsp</result>
+			<result name="designSurveyPage">/survey/designSurveyPage.jsp</result>
+			<result name="toEditSurveyPage">/survey/eidtSurveyPage.jsp</result>
+			<result name="toUploadLogoPage">/survey/updateLogoPage.jsp</result>
+			<result name="input">/survey/updateLogoPage.jsp</result>
+			<interceptor-ref name="surveyparkStack">
+				<!-- <param name="fileUpload.maximumSize">60000</param> -->
+				<param name="fileUpload.allowedExtensions">.jpg,.jpeg,.png,.gif,.bmp</param>
+				<param name="fileUpload.allowedTypes">image/jpg,image/jpeg,image/pjpeg,image/bmp,image/gif,image/png</param>
+				<param name="fileUpload.useActionMessageBundle">true</param>
+			</interceptor-ref>
+		</action>
+	</package>
+</struts>

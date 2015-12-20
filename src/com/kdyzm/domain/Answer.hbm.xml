@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "file:///D:/程序/java/Hibernate/dtd文件/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.kdyzm.domain.Answer" table="answer">
+		<id name="answerId" type="integer" length="32">
+			<generator class="increment"></generator>
+		</id>
+		<property name="answerIndexs" type="string" length="300"></property>
+		<property name="answerTime" type="timestamp"></property>
+		<property name="otherAnswer" type="string" length="300"></property>
+		<property name="questionId" type="integer" length="32"></property>
+		<property name="surveyId" type="integer" length="32"></property>
+		<property name="uuid" type="string" length="32"></property>
+	</class>
+</hibernate-mapping>
